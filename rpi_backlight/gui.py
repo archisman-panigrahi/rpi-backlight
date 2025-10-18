@@ -1,4 +1,5 @@
 import sys
+import os
 
 from . import Backlight
 
@@ -28,6 +29,14 @@ def main():
         backlight.brightness = int(scale.get_value())
 
     window = Gtk.Window(title="rpi-backlight GUI")
+    icon_path = (
+        "/usr/share/icons/Adwaita/scalable/status/display-brightness-symbolic.svg"
+    )
+    try:
+        if os.path.exists(icon_path):
+            window.set_icon_from_file(icon_path)
+    except Exception:
+        pass
     scale = Gtk.Scale(
         orientation=Gtk.Orientation.HORIZONTAL,
         adjustment=Gtk.Adjustment(
