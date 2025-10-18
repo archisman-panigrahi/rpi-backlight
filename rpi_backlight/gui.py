@@ -30,7 +30,7 @@ def main():
 
     window = Gtk.Window(title="rpi-backlight GUI")
     icon_path = (
-        "/usr/share/icons/Adwaita/scalable/status/display-brightness-symbolic.svg"
+        "/usr/share/icons/Adwaita/symbolic/status/display-brightness-symbolic.svg"
     )
     try:
         if os.path.exists(icon_path):
