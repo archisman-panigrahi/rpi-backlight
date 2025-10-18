@@ -10,7 +10,8 @@ def main():
         import gi
 
         gi.require_version("Gtk", "3.0")
-        from gi.repository import Gtk, GLib
+        gi.require_version("GdkPixbuf", "2.0")
+        from gi.repository import Gtk, GLib, GdkPixbuf
     except ImportError:
         print("Please install pygobject to use the rpi-backlight GUI!")
         sys.exit()
@@ -32,11 +33,29 @@ def main():
     icon_path = (
         "/usr/share/icons/Adwaita/symbolic/status/display-brightness-symbolic.svg"
     )
+
+    # Try several ways to set the window/application icon. On some systems
+    # the window manager ignores per-window icons or requires specific formats.
     try:
         if os.path.exists(icon_path):
-            window.set_icon_from_file(icon_path)
+            try:
+                # Preferred: set icon from file (lets GTK pick a loader)
+                window.set_icon_from_file(icon_path)
+            except Exception:
+                # Fall back to loading a GdkPixbuf and setting that explicitly
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file(icon_path)
+                    window.set_icon(pixbuf)
+                except Exception:
+                    # Another fallback: set default icon for all windows
+                    try:
+                        Gtk.Window.set_default_icon_from_file(icon_path)
+                    except Exception:
+                        pass
     except Exception:
+        # Never crash the GUI because of icon problems
         pass
+
     scale = Gtk.Scale(
         orientation=Gtk.Orientation.HORIZONTAL,
         adjustment=Gtk.Adjustment(
